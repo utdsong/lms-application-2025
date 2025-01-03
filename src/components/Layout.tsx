@@ -1,59 +1,11 @@
-import { Suspense } from "react";
-import { useRoutes, Routes, Route } from "react-router-dom";
-import { Trophy, Star, Flame, Lock } from "lucide-react";
-import routes from "tempo-routes";
+import { ReactNode } from 'react';
+import { Trophy, Star, Flame } from 'lucide-react';
 
-// Import your course card component
-import { CourseCard } from "./components/CourseCard";
+interface LayoutProps {
+  children: ReactNode;
+}
 
-const courses = [
-  {
-    title: "Introduction to Programming",
-    progress: 75,
-    nextChallenge: "Complete Variables Quiz",
-    image: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&q=80&w=500",
-    xp: 120
-  },
-  {
-    title: "Web Development Basics",
-    progress: 45,
-    nextChallenge: "CSS Layouts Project",
-    image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&q=80&w=500",
-    xp: 90
-  },
-  {
-    title: "Data Structures",
-    progress: 25,
-    nextChallenge: "Arrays and Lists",
-    image: "https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&q=80&w=500",
-    xp: 120
-  }
-];
-
-const achievements = [
-  {
-    title: "First Steps",
-    unlocked: true,
-    icon: Trophy
-  },
-  {
-    title: "Quick Learner",
-    unlocked: false,
-    icon: Lock
-  },
-  {
-    title: "Streak Master",
-    unlocked: false,
-    icon: Lock
-  },
-  {
-    title: "Knowledge Seeker",
-    unlocked: false,
-    icon: Lock
-  }
-];
-
-function Dashboard() {
+export function Layout({ children }: LayoutProps) {
   return (
     <div className="min-h-screen bg-[#0B1120] text-white p-8">
       <div className="max-w-7xl mx-auto">
@@ -120,9 +72,7 @@ function Dashboard() {
                 <a href="#" className="text-blue-600 hover:text-blue-700">View All</a>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {courses.map((course, index) => (
-                  <CourseCard key={index} {...course} />
-                ))}
+                {children}
               </div>
             </div>
 
@@ -134,22 +84,15 @@ function Dashboard() {
               </div>
               <p className="text-gray-400 mb-6">Track your progress and unlock new achievements</p>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {achievements.map((achievement, index) => (
-                  <div 
-                    key={index}
-                    className={`bg-[#1B2333] ${achievement.unlocked ? 'border-yellow-500/20' : 'border-gray-700'} border rounded-lg p-4 text-center`}
-                  >
-                    <div className={`w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center
-                      ${achievement.unlocked ? 'bg-gradient-to-br from-yellow-400 to-yellow-600' : 'bg-gray-700'}`}
-                    >
-                      <achievement.icon className={`w-6 h-6 ${achievement.unlocked ? 'text-white' : 'text-gray-500'}`} />
-                    </div>
-                    <h3 className="font-semibold mb-1">{achievement.title}</h3>
-                    {achievement.unlocked && (
-                      <span className="px-2 py-1 bg-green-500/20 text-green-400 rounded-full text-xs">Unlocked</span>
-                    )}
+                {/* Achievement Cards */}
+                <div className="bg-[#1B2333] border border-yellow-500/20 rounded-lg p-4 text-center">
+                  <div className="bg-gradient-to-br from-yellow-400 to-yellow-600 w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center">
+                    <Trophy className="w-6 h-6 text-white" />
                   </div>
-                ))}
+                  <h3 className="font-semibold mb-1">First Steps</h3>
+                  <span className="px-2 py-1 bg-green-500/20 text-green-400 rounded-full text-xs">Unlocked</span>
+                </div>
+                {/* Add more achievement cards as needed */}
               </div>
             </div>
           </div>
@@ -162,40 +105,11 @@ function Dashboard() {
                 <button className="bg-white text-[#1B2333] px-4 py-1 rounded-full text-sm font-medium">Global</button>
                 <button className="text-gray-400 px-4 py-1 rounded-full text-sm">Course</button>
               </div>
-              <div className="space-y-4">
-                {[
-                  { name: "Sarah Johnson", points: "pts", avatar: "🧑‍💻" },
-                  { name: "Mike Chen", points: "pts", avatar: "👨‍💻" },
-                  { name: "Emma Wilson", points: "pts", avatar: "👩‍💻" }
-                ].map((user, index) => (
-                  <div key={index} className="flex items-center justify-between p-2">
-                    <div className="flex items-center gap-2">
-                      <span>{user.avatar}</span>
-                      <span>{user.name}</span>
-                    </div>
-                    <span className="text-gray-400">{user.points}</span>
-                  </div>
-                ))}
-              </div>
+              {/* Add leaderboard entries here */}
             </div>
           </div>
         </div>
       </div>
     </div>
   );
-}
-
-function App() {
-  return (
-    <Suspense fallback={<p>Loading...</p>}>
-      <>
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-        </Routes>
-        {import.meta.env.VITE_TEMPO === "true" && useRoutes(routes)}
-      </>
-    </Suspense>
-  );
-}
-
-export default App;
+} 
