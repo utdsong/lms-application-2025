@@ -3,24 +3,26 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class DailyChallenge extends Model
 {
     protected $fillable = [
         'title',
         'description',
-        'points',
-        'total',
-        'deadline'
+        'target_count',
+        'xp_reward',
+        'expires_at'
     ];
 
     protected $casts = [
-        'deadline' => 'datetime'
+        'expires_at' => 'datetime'
     ];
 
-    public function userProgress()
+    public function users(): BelongsToMany
     {
-        return $this->hasMany(UserChallengeProgress::class);
+        return $this->belongsToMany(User::class, 'user_daily_challenges')
+            ->withPivot('progress', 'completed')
+            ->withTimestamps();
     }
 } 

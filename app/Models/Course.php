@@ -27,4 +27,14 @@ class Course extends Model
     {
         return $this->hasMany(Lesson::class)->orderBy('order');
     }
+
+    public function challenges()
+    {
+        return $this->hasMany(Challenge::class);
+    }
+
+    public function dailyChallenges()
+    {
+        return $this->hasMany(DailyChallenge::class);
+    }
 }

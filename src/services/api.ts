@@ -4,12 +4,10 @@ const api = axios.create({
     baseURL: 'http://localhost:8000/api',
     headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json'
     },
-    withCredentials: true
 });
 
-// Add token to requests if it exists
+// Add request interceptor to include auth token
 api.interceptors.request.use((config) => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -18,4 +16,39 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
-export default api; 
+// Add response interceptor to handle errors
+api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response?.status === 401) {
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+        }
+        return Promise.reject(error);
+    }
+);
+
+const API_ENDPOINTS = {
+  // Course endpoints
+  getCourses: () => '/courses',
+  getCourse: (id: number) => `/courses/${id}`,
+  getCourseProgress: (id: number) => `/courses/${id}/progress`,
+  
+  // Lesson endpoints
+  getLesson: (id: number) => `/lessons/${id}`,
+  updateLessonProgress: (id: number) => `/lessons/${id}/progress`,
+  
+  // Achievement endpoints
+  getAchievements: () => '/achievements',
+  getUserAchievements: () => '/user/achievements',
+  
+  // Progress endpoints
+  getDailyStreak: () => '/progress/streak',
+  getXPProgress: () => '/progress/xp',
+  
+  // Practice endpoints
+  submitPronunciation: (lessonId: number) => `/lessons/${lessonId}/pronunciation`,
+  getAudioFeedback: (recordingId: number) => `/audio-feedback/${recordingId}`
+};
+
+export default API_ENDPOINTS; 

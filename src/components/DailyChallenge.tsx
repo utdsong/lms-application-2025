@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, CheckCircle, Clock, Award } from 'lucide-react';
-import toast from 'react-hot-toast';
+import { mockChallenges } from '../services/mockData';
 
 interface Challenge {
   id: number;
@@ -17,72 +17,46 @@ export function DailyChallenge() {
   const [challenge, setChallenge] = useState<Challenge | null>(null);
   const [timeLeft, setTimeLeft] = useState('');
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    loadChallenge();
-    const timer = setInterval(updateTimeLeft, 1000);
-    return () => clearInterval(timer);
+    // Simulate API call with mock data
+    setTimeout(() => {
+      setChallenge(mockChallenges[0]);
+      setLoading(false);
+    }, 500);
   }, []);
 
-  const loadChallenge = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch('/api/daily-challenge');
-      if (!response.ok) throw new Error('Failed to load challenge');
-      
-      const data = await response.json();
-      setChallenge(data);
-      setError(null);
-    } catch (error) {
-      setError('Unable to load daily challenge');
-      toast.error('Failed to load daily challenge');
-    } finally {
-      setLoading(false);
+  useEffect(() => {
+    if (challenge) {
+      const timer = setInterval(updateTimeLeft, 1000);
+      return () => clearInterval(timer);
     }
-  };
+  }, [challenge]);
 
   const updateTimeLeft = () => {
-    if (!challenge) return;
+    if (challenge) {
+      const deadline = new Date(challenge.deadline);
+      const now = new Date();
+      const diff = deadline.getTime() - now.getTime();
 
-    const now = new Date();
-    const deadline = new Date(challenge.deadline);
-    const diff = deadline.getTime() - now.getTime();
+      if (diff <= 0) {
+        setTimeLeft('Expired');
+        return;
+      }
 
-    if (diff <= 0) {
-      setTimeLeft('Expired');
-      return;
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      setTimeLeft(`${hours}h ${minutes}m remaining`);
     }
-
-    const hours = Math.floor(diff / (1000 * 60 * 60));
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    setTimeLeft(`${hours}h ${minutes}m`);
   };
 
   if (loading) {
-    return (
-      <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl p-6 animate-pulse">
-        <div className="h-8 w-48 bg-white/20 rounded mb-4"></div>
-        <div className="h-4 w-full bg-white/20 rounded"></div>
-      </div>
-    );
+    return <div className="animate-pulse bg-gray-700 rounded-lg h-48"></div>;
   }
 
-  if (error) {
-    return (
-      <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-6 text-center">
-        <p className="text-red-400">{error}</p>
-        <button 
-          onClick={loadChallenge}
-          className="mt-4 px-4 py-2 bg-red-500/20 hover:bg-red-500/30 rounded-lg text-sm"
-        >
-          Try Again
-        </button>
-      </div>
-    );
+  if (!challenge) {
+    return null;
   }
-
-  if (!challenge) return null;
 
   const progress = (challenge.progress / challenge.total) * 100;
 

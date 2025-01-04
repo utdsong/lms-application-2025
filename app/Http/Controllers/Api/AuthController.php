@@ -83,8 +83,11 @@ class AuthController extends Controller
         return response()->json([
             'user' => [
                 'id' => $request->user()->id,
-                'name' => $request->user()->username,
+                'username' => $request->user()->username,
                 'email' => $request->user()->email,
+                'avatar_url' => $request->user()->avatar_url,
+                'avatar_style' => $request->user()->avatar_style,
+                'avatar_seed' => $request->user()->avatar_seed,
                 'role' => $request->user()->is_admin ? 'admin' : 'student',
             ]
         ]);

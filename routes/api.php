@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\AIContentController;
 use App\Http\Controllers\Admin\GameChallengeController;
 use App\Http\Controllers\Admin\LessonContentController;
 use App\Http\Controllers\Api\DailyChallengeController;
+use App\Http\Controllers\Api\AvatarController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
@@ -42,6 +43,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/daily-challenge', [DailyChallengeController::class, 'current']);
     Route::post('/daily-challenge/progress', [DailyChallengeController::class, 'updateProgress']);
+
+    Route::post('/avatar', [AvatarController::class, 'update']);
 }); 
 
 // Admin routes

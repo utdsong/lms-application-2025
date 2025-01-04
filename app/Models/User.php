@@ -13,6 +13,9 @@ class User extends Authenticatable
         'username',
         'email',
         'password',
+        'avatar_url',
+        'avatar_style',
+        'avatar_seed',
         'current_rank',
         'total_points',
         'current_streak'
@@ -38,5 +41,12 @@ class User extends Authenticatable
     public function settings()
     {
         return $this->hasOne(UserSettings::class);
+    }
+
+    public function dailyChallenges()
+    {
+        return $this->belongsToMany(DailyChallenge::class, 'user_challenge_progress')
+            ->withPivot('progress', 'completed')
+            ->withTimestamps();
     }
 } 

@@ -3,8 +3,11 @@ import { useNavigate } from 'react-router-dom';
 
 interface User {
   id: string;
-  name: string;
+  username: string;
   email: string;
+  avatar_url?: string;
+  avatar_style?: string;
+  avatar_seed?: string;
   role: 'student' | 'admin';
 }
 
